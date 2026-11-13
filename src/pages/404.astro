@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import { ui } from '../i18n/ui';
+const t = ui.en.notFound;
+const zh = ui['zh-hk'].notFound;
+---
+
+<Base lang="en" title={`${t.title} — siu/bit`} noindex>
+  <section class="wrap not-found">
+    <p class="eyebrow">// 404</p>
+    <h1>{t.title}<span class="accent">.</span></h1>
+    <p class="lead">{t.body} <span lang="zh-HK">{zh.body}</span></p>
+    <div class="actions">
+      <a class="btn btn-solid" href="/">{t.back}</a>
+      <a class="btn btn-outline" href="/zh-hk/" lang="zh-HK">{zh.back}</a>
+    </div>
+  </section>
+</Base>

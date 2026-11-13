@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { ui, site, type Locale } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+
+const work = (await getCollection('work', ({ id }) => id.startsWith(`${lang}/`))).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const workshopMail = `mailto:${site.email}?subject=${encodeURIComponent(t.learn.mailSubject)}`;
+---
+
+<Base lang={lang}>
+  <section class="wrap hero">
+    <p class="eyebrow">{t.hero.eyebrow}</p>
+    <h1>{t.hero.title[0]}<br />{t.hero.title[1]}<span class="accent">.</span></h1>
+    <p class="lead">{t.hero.lead}</p>
+    <div class="actions">
+      <a class="btn btn-solid" href="#contact">{t.hero.primary}</a>
+      <a class="btn btn-outline" href="#work">{t.hero.secondary}</a>
+    </div>
+  </section>
+
+  <section id="build" class="band band-dark">
+    <div class="wrap section">
+      <div class="section-head">
+        <p class="eyebrow">/build</p>
+        <h2>{t.build.title}</h2>
+      </div>
+      <div class="grid grid-260">
+        {
+          t.build.items.map((item, i) => (
+            <div class="card card-dark">
+              <p class="eyebrow">{String(i + 1).padStart(2, '0')}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="wrap section">
+    <div class="section-head">
+      <p class="eyebrow">/how</p>
+      <h2>{t.how.title}</h2>
+    </div>
+    <div class="grid grid-240 steps">
+      {
+        t.how.items.map((item) => (
+          <div class="step">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="work" class="band band-tint">
+    <div class="wrap section">
+      <div class="section-head">
+        <p class="eyebrow">/work</p>
+        <h2>{t.work.title}</h2>
+      </div>
+      <div class="grid grid-300">
+        {
+          work.map(({ data }) => (
+            <article class="card card-paper">
+              <p class="tag">{data.tag}</p>
+              <h3>{data.title}</h3>
+              <p>{data.summary}</p>
+              {data.result && <p class="result">{data.result}</p>}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="learn" class="wrap section learn">
+    <div class="learn-copy">
+      <p class="eyebrow">/learn</p>
+      <h2>{t.learn.title}</h2>
+      <p>{t.learn.body}</p>
+    </div>
+    <a class="btn btn-outline learn-cta" href={workshopMail}>{t.learn.cta}</a>
+  </section>
+
+  <section id="contact" class="band band-dark">
+    <div class="wrap section contact">
+      <p class="eyebrow">/contact</p>
+      <h2>{t.contact.title[0]}<br />{t.contact.title[1]}</h2>
+      <div class="actions">
+        <a class="btn btn-accent mono" href={`mailto:${site.email}`}>{site.email}</a>
+        {
+          site.whatsapp && (
+            <a class="btn btn-ghost mono" href={`https://wa.me/${site.whatsapp}`} rel="noopener">
+              {t.contact.whatsapp}
+            </a>
+          )
+        }
+        <a class="btn btn-ghost mono" href={`https://github.com/${site.github}`} rel="noopener">github/{site.github}</a>
+      </div>
+    </div>
+  </section>
+</Base>

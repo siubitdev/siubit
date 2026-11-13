@@ -1,0 +1,66 @@
+---
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource/noto-sans-hk/500.css';
+import '@fontsource/noto-sans-hk/900.css';
+import '../styles/global.css';
+import { ui, htmlLang, homePath, locales, type Locale } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  title?: string;
+  noindex?: boolean;
+}
+const { lang, title, noindex = false } = Astro.props;
+const t = ui[lang];
+const abs = (path: string) => new URL(path, Astro.site).href;
+---
+
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ?? t.metaTitle}</title>
+    <meta name="description" content={t.metaDescription} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#111614" />
+    {noindex && <meta name="robots" content="noindex" />}
+    {
+      !noindex && (
+        <>
+          <link rel="canonical" href={abs(homePath[lang])} />
+          {locales.map((l) => <link rel="alternate" hreflang={htmlLang[l]} href={abs(homePath[l])} />)}
+          <link rel="alternate" hreflang="x-default" href={abs(homePath.en)} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={t.metaTitle} />
+          <meta property="og:description" content={t.metaDescription} />
+          <meta property="og:url" content={abs(homePath[lang])} />
+        </>
+      )
+    }
+  </head>
+  <body>
+    <a class="skip" href="#main">{t.skip}</a>
+    <header class="wrap site-header">
+      <a class="brand" href={homePath[lang]} aria-label={t.homeLabel}>
+        <span class="brand-mark" aria-hidden="true">小</span>
+        <span class="brand-word">siu<span class="slash">/</span>bit</span>
+      </a>
+      <nav aria-label={t.navLabel}>
+        <a href={`${homePath[lang]}#build`}>{t.nav.build}</a>
+        <a href={`${homePath[lang]}#work`}>{t.nav.work}</a>
+        <a href={`${homePath[lang]}#learn`}>{t.nav.learn}</a>
+        <a href={homePath[t.switchTo.locale]} lang={t.switchTo.lang} hreflang={t.switchTo.lang}>{t.switchTo.label}</a>
+        <a class="nav-cta" href={`${homePath[lang]}#contact`}>{t.nav.contact}</a>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="wrap site-footer">
+      <span>siu<span class="ink">/</span>bit · 小bit · {t.footer.place}</span>
+      <span>{t.footer.promise}</span>
+    </footer>
+  </body>
+</html>
